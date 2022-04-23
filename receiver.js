@@ -18,7 +18,3 @@ socket.on("end", () => {
     console.log(`\nFinished getting file. speed was: ${((size / (1024 * 1024)) / (elapsed / 1000)).toFixed(2)} MB/s`);
     process.exit();
 });
-
-socket.on("filename", (filename) => {
-    console.log("filename")
-})

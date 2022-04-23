@@ -5,6 +5,7 @@ socket = remote_server ? net.connect(8000, remote_server) : net.connect(8000);
 
 let ostream = fs.createWriteStream("./receiver/SC-02.pdf");
 let date = new Date(), size = 0, elapsed;
+
 socket.on('data', chunk => {
     size += chunk.length;
     elapsed = new Date() - date;
@@ -12,7 +13,12 @@ socket.on('data', chunk => {
     process.stdout.write(`\r${(size / (1024 * 1024)).toFixed(2)} MB of data was sent. Total elapsed time is ${elapsed / 1000} s`);
     ostream.write(chunk);
 });
+
 socket.on("end", () => {
     console.log(`\nFinished getting file. speed was: ${((size / (1024 * 1024)) / (elapsed / 1000)).toFixed(2)} MB/s`);
     process.exit();
 });
+
+socket.on("filename", (filename) => {
+    console.log(filename)
+})

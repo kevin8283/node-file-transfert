@@ -1,10 +1,14 @@
 const net = require("net"), fs = require("fs");
+const path = require("path")
+
+const filename = path.basename("./sender/SC-02.pdf")
 
 let server, istream = fs.createReadStream("./sender/SC-02.pdf");
 
 server = net.createServer(socket => {
     socket.pipe(process.stdout);
     istream.on("readable", function () {
+        socket.emit("filename", filename)
         let data;
         while (data = this.read()) {
             socket.write(data);

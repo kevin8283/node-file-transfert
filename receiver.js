@@ -20,5 +20,5 @@ socket.on("end", () => {
 });
 
 socket.on("filename", (filename) => {
-    console.log(filename)
+    console.log("filename")
 })

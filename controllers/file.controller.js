@@ -1,7 +1,7 @@
 const fs = require('fs')
-const net = require('net')
 const path = require('path')
 const multer = require('multer')
+const { zip } = require('zip-a-folder')
 
 const fileController = {
     getFilesInDirectory: (req, res) => {
@@ -64,42 +64,30 @@ const fileController = {
         })
     },
 
-    getPDF: (req, res) => {
-        res.download('sender/SC-02.pdf')
-    },
-
     downloadFile: (req, res) => {
-        /* let remote_server = process.argv[2]
-        let socket */
-
         const filePath = req.body.path
-        const fileName = path.basename(filePath)
 
-        res.download(filePath, (error) => {
-            if (error) {
-                console.log(error)
-            }
-        })
-
-        /* socket = remote_server ? net.connect(8000, remote_server) : net.connect(8000)
-
-        let ostream = fs.createWriteStream(`./receiver/${fileName}`)
-        let date = new Date(), size = 0, elapsed
-
-        socket.emit('get-file', fileName)
-
-        socket.on('data', chunk => {
-            size += chunk.length
-            elapsed = new Date() - date
-            socket.write(`\r${(size / (1024 * 1024)).toFixed(2)} MB of data was sent. Total elapsed time is ${elapsed / 1000} s`)
-            process.stdout.write(`\r${(size / (1024 * 1024)).toFixed(2)} MB of data was sent. Total elapsed time is ${elapsed / 1000} s`)
-            ostream.write(chunk)
-        })
-
-        socket.on("end", () => {
-            console.log(`\nFinished getting file. speed was: ${((size / (1024 * 1024)) / (elapsed / 1000)).toFixed(2)} MB/s`)
-            process.exit()
-        }) */
+        if (fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory()) {
+            zip(filePath, 'zipped/archive.zip')
+                .then(() => {
+                    res.download('zipped/archive.zip', (error) => {
+                        if (error) {
+                            console.log(error)
+                        }
+                        fs.rmSync('zipped/archive.zip')
+                    })
+                })
+                .catch(e => {
+                    console.log(e)
+                })
+        }
+        else {
+            return res.download(filePath, (error) => {
+                if (error) {
+                    console.log(error)
+                }
+            })
+        }
     },
 
     downloadFileMobile: (req, res) => {
@@ -128,9 +116,9 @@ const fileController = {
         upload(req, res, (err) => {
             if (err) {
                 console.log(err)
-                res.status(400).send("Something went wrong!");
+                res.status(400).send("Something went wrong!")
             }
-            res.send(req.file);
+            res.send(req.file)
         });
     }
 }

@@ -20,6 +20,14 @@ const fileController = {
                     name: file
                 }
 
+                try {
+                    const stats = fs.statSync(`${path}/${file}`)
+                    fileObject = {...fileObject, size: stats.size}
+                } 
+                catch (error) {
+                    fileObject = {...fileObject, size: null}
+                }
+
                 const regex = new RegExp('\.[0-9a-z]+$', 'i', 'g')
 
                 if (file.match(regex) === null) {
@@ -111,6 +119,7 @@ const fileController = {
 
     uploadFile: (req, res) => {
         const downloadPath = path.relative(__dirname, 'C:/Downloads')
+        console.log('Tonga aaaa')
 
         const storage = multer.diskStorage({
             destination: (req, file, callback) => {

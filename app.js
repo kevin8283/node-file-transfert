@@ -3,6 +3,7 @@ const cors = require('cors')
 const port = process.env.API_PORT || 4000
 
 const fileRouter = require('./routers/file.router')
+const osRouter = require('./routers/os.router')
 
 const app = express()
 
@@ -11,6 +12,7 @@ app.use(express.urlencoded({extended: false}))
 app.use(cors())
 
 app.use('/files', fileRouter)
+app.use('/os', osRouter)
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)

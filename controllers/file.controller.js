@@ -135,9 +135,9 @@ const fileController = {
         upload(req, res, (err) => {
             if (err) {
                 console.log(err)
-                res.status(400).send("Something went wrong!")
+                return res.status(400).send("Something went wrong!")
             }
-            res.json({ message: "File uploaded successfully" })
+            return res.json({ message: "File uploaded successfully" })
         });
     }
 }
